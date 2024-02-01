@@ -1,16 +1,24 @@
-const roles = require("./role");
-module.exports = () =>{
-  const temp = [];
-  for(let i = 0;i<22;i++){
-    temp.push([makeEntry()]);
-  }
-  return [];
+module.exports = function(){
+  const employees = [];
+  
+  employees.push(makeEntry(1));
+  employees.push(roleWithManager(2, 1));
+  employees.push(roleWithManager(2, 1));
+  employees.push(makeEntry(3));
+  employees.push(roleWithManager(4, 4));
+  employees.push(makeEntry(5));
+  employees.push(roleWithManager(6, 6));
+  employees.push(makeEntry(7));
+  employees.push(roleWithManager(8, 8));
+
+
+  return employees;
 } 
-
-
-function makeEntry(){
-  return [getRandomFromArray(first_names), getRandomFromArray(last_names),
-  getRandomFromArray(roles.length) + 1];
+function roleWithManager(roleID, managerID){
+  return [getRandomFromArray(first_names), getRandomFromArray(last_names), roleID.toString(), managerID.toString()];
+}
+function makeEntry(roleID){
+  return [getRandomFromArray(first_names), getRandomFromArray(last_names), roleID.toString(), null];
 }
 function getRandomFromArray(array){
   return array[getRandomNumber(array.length)];
