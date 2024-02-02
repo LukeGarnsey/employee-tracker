@@ -9,7 +9,8 @@ const options = { 'view all departments':{call:viewAllDepartments },
 'add a role':{call:addRole},
 'add an employee':{call:addEmployee},
 'update employee':{call:updateEmployee},
-'View Department Budget':{call:viewBudget}};
+'view department budget':{call:viewBudget},
+'view employees by department':{call:viewEmployeesByDepartment}};
 
 function showMainOptions(){
   inputList('What would you like to do?', Object.keys(options))
@@ -127,5 +128,18 @@ Total ${depName} salaries $${salaries}
     })
   });
 }
+function viewEmployeesByDepartment(){
+  db.selectAllDepartments().then(allDepartments=>{
+    const departmentNames = allDepartments.map(el=>el.name);
+    inputList('View Budget of Department', departmentNames).then(depName =>{
+      const deptID = allDepartments[departmentNames.indexOf(depName)].id;
+      db.viewDepartmentEmployees(deptID).then((result)=>{
+        console.table(result);
+        delayCall(showMainOptions);
+      })
+    });
+  });
+}
+
 
 showMainOptions();
