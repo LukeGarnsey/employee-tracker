@@ -39,23 +39,3 @@ db.query(`SELECT * FROM role`, (err, result)=>{
 db.query(`SELECT * FROM employee`, (err, result)=>{
   console.table(result);
 });
-
-//query for selecting employee+role+manager+role
-// const empWithManagerQuery = `SELECT
-// e1.first_name AS employee_first_name,
-// r1.title AS employee_role,
-// e2.first_name AS manager_first_name,
-// r2.title AS manager_role
-// FROM
-// employee e1
-// JOIN
-// role r1 ON e1.role_id = r1.id
-// JOIN
-// employee e2 ON e1.manager_id = e2.id
-// LEFT JOIN
-// role r2 ON e2.role_id = r2.id;`;
-// // INNER JOIN role on e1.role_id = role.id 
-// db.query(empWithManagerQuery,
-// (err, results)=>{
-//   console.table(results);
-// });

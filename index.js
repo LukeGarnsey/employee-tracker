@@ -8,14 +8,8 @@ const options = { 'view all departments':{call:viewAllDepartments },
 'add a department':{call:addDepartment},
 'add a role':{call:addRole},
 'add an employee':{call:addEmployee},
-'update employee':{call:updateEmployee}};
-// const options = [{name:'view all departments', call:viewAllDepartments }, {name:'view all roles', call:viewAllRoles}, 'view all employees', 'add a department', 'add a role'
-// ,'add an employee', 'update an employee role'];
-
-// var nameArray = options.map(el =>{
-//   return el.name;
-// });
-// console.log(nameArray);
+'update employee':{call:updateEmployee},
+'View Department Budget':{call:viewBudget}};
 
 function showMainOptions(){
   inputList('What would you like to do?', Object.keys(options))
@@ -87,9 +81,7 @@ function addEmployee(){
               let managerID = null
               if(index >= 0)
                 managerID = allEmployees[index].id;
-
               db.insertNewEmployee([firstName, lastName, roleID, managerID]).then(result=>{
-                console.log(result);
                 console.log(`${firstName} ${lastName} is now an employee!`);
                 delayCall(showMainOptions);
               });
@@ -118,6 +110,21 @@ function updateEmployee(){
         });
       });
     });
+  });
+}
+function viewBudget(){
+  db.selectAllDepartments().then(allDepartments=>{
+    const departmentNames = allDepartments.map(el=>el.name);
+    inputList('View Budget of Department', departmentNames).then(depName =>{
+      const deptID = allDepartments[departmentNames.indexOf(depName)].id;
+      db.viewBudget(deptID).then((salaries)=>{
+        console.log(`---
+Total ${depName} salaries $${salaries}
+---`);
+        delayCall(showMainOptions);
+      });
+      
+    })
   });
 }
 
