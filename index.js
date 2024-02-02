@@ -7,7 +7,8 @@ const options = { 'view all departments':{call:viewAllDepartments },
 'view all employees':{call:viewAllEmployees},
 'add a department':{call:addDepartment},
 'add a role':{call:addRole},
-'add an employee':{call:addEmployee}};
+'add an employee':{call:addEmployee},
+'update employee':{call:updateEmployee}};
 // const options = [{name:'view all departments', call:viewAllDepartments }, {name:'view all roles', call:viewAllRoles}, 'view all employees', 'add a department', 'add a role'
 // ,'add an employee', 'update an employee role'];
 
@@ -59,19 +60,14 @@ function addRole(){
         const departmentNames = allDepartments.map(el=>el.name);
         inputList('What Department is it in?', departmentNames)
         .then(department =>{
-          for(let i = 0;i<departmentNames.length;i++){
-            if(allDepartments[i].name === department){
-              db.insertNewRole([roleTitle, salary, allDepartments[i].id]).then(result=>{
-                console.log(`${roleTitle} is now a role in the ${department} department!`);
-                delayCall(showMainOptions);
-              });
-            }
-          }
+          const id = allDepartments[departmentNames.indexOf(department)].id
+          db.insertNewRole([roleTitle, salary, id]).then(result=>{
+            console.log(`${roleTitle} is now a role in the ${department} department!`);
+            delayCall(showMainOptions);
+          });
         });
       }).catch(err=>console.log(err));
-      
     });
-    
   }).catch(err=>{
     console.log(err);
   })
@@ -91,7 +87,7 @@ function addEmployee(){
               let managerID = null
               if(index >= 0)
                 managerID = allEmployees[index].id;
-              
+
               db.insertNewEmployee([firstName, lastName, roleID, managerID]).then(result=>{
                 console.log(result);
                 console.log(`${firstName} ${lastName} is now an employee!`);
@@ -105,6 +101,24 @@ function addEmployee(){
   }).catch(err=>{
     console.log(err);
   })
+}
+function updateEmployee(){
+  db.selectAllEmployees().then(allEmployees =>{
+    const employeeNames = allEmployees.map(el=>`${el.first_name} ${el.last_name}`);
+    inputList('Which employee needs updating?', employeeNames).then(employeeName =>{
+      const employeeID = allEmployees[employeeNames.indexOf(employeeName)].id;
+      db.selectAllRoles().then(allRoles=>{
+        const roleNames = allRoles.map(el=>el.title);
+        inputList('What is their new role?', roleNames).then(roleTitle=>{
+          const roleID = allRoles[roleNames.indexOf(roleTitle)].id;
+          db.updateEmployee(employeeID, roleID).then(result=>{
+            console.log(`${employeeName} role updated`);
+            delayCall(showMainOptions);
+          });
+        });
+      });
+    });
+  });
 }
 
 showMainOptions();
